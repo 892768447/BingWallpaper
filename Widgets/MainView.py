@@ -11,6 +11,7 @@ Created on 2018年4月14日
 """
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QPushButton, QStackedLayout
 
+from Utils.NetWork import NetWork
 from Utils.Signals import Signals
 from Widgets.StoryView import StoryView
 
@@ -26,6 +27,8 @@ class MainView(QLabel):
         super(MainView, self).__init__(*args, **kwargs)
         layout = QHBoxLayout(self, spacing=0)
         layout.setContentsMargins(0, 0, 0, 0)
+        Signals.setParent(self)
+        NetWork.setParent(self)
 
         # 获取上一页图片的按钮
         layout.addWidget(QPushButton(self, objectName='previousButton'))
@@ -40,6 +43,9 @@ class MainView(QLabel):
 
         # 获取下一页图片的按钮
         layout.addWidget(QPushButton(self, objectName='nextButton'))
+    
+    def _initData(self):
+        """加载api接口数据"""
 
 if __name__ == '__main__':
     import sys
