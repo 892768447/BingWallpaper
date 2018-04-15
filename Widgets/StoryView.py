@@ -6,8 +6,12 @@ Created on 2018年4月14日
 @file: Widgets.StoryView
 @description: 故事页面
 """
+import json
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QSpacerItem,\
     QSizePolicy
+
+from Utils.Signals import Signals
 
 
 __Author__ = 'By: Irony\nQQ: 892768447\nEmail: 892768447@qq.com'
@@ -20,7 +24,7 @@ class StoryView(QWidget):
     def __init__(self, *args, **kwargs):
         super(StoryView, self).__init__(*args, **kwargs)
         layout = QVBoxLayout(self, spacing=0)
-        layout.setContentsMargins(0, 30, 0, 60)  # 左上右下边距
+        layout.setContentsMargins(10, 30, 10, 60)  # 左上右下边距
 
         # 标题控件
         self.titleLabel = QLabel(self, wordWrap=True, objectName='titleLabel')
@@ -33,6 +37,9 @@ class StoryView(QWidget):
         # 故事控件
         self.storyLabel = QLabel(self, wordWrap=True, objectName='storyLabel')
         layout.addWidget(self.storyLabel)
+
+        # 信号槽
+        Signals.storyAdded.connect(self._setStory)
 
     def setTitle(self, title, tip=''):
         """设置标题及提示文字"""
@@ -58,6 +65,22 @@ class StoryView(QWidget):
         if tip:
             self.storyLabel.setToolTip(tip)
         return self
+
+    def _setStory(self, _, datas):
+        """解析json数据"""
+        try:
+            datas = json.loads(datas.decode())
+            content = datas.get('para1', '') + '\n' + datas.get('para2', '')
+            date = datas.get('date', '')
+            provider = datas.get('provider', '')
+            country = datas.get('country', '')
+            city = datas.get('city', '')
+            continent = datas.get('continent', '')
+            self.setTitle(datas.get('title', ''), datas.get('attribute', ''))
+            self.setStory(content, date, provider, country, city, continent)
+        except Exception as e:
+            print(e)
+
 
 if __name__ == '__main__':
     import sys

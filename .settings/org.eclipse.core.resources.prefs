@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
 encoding//Utils/NetWork.py=utf-8
+encoding//Utils/Style.py=utf-8
 encoding//Utils/System.py=utf-8
 encoding//Widgets/MainView.py=utf-8
+encoding//Widgets/SplashView.py=utf-8
+encoding/Client.py=utf-8

@@ -8,7 +8,8 @@ Created on 2018年4月14日
 """
 from datetime import datetime, timedelta
 
-from PyQt5.QtWidgets import QWidget, QGridLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QGridLayout, QVBoxLayout
 
 from Utils.Signals import Signals
 from Widgets.ImageView import ImageView
@@ -23,8 +24,25 @@ class PageView(QWidget):
 
     def __init__(self, *args, **kwargs):
         super(PageView, self).__init__(*args, **kwargs)
-        layout = QGridLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        layout = QVBoxLayout(self, spacing=0)
+        layout.setContentsMargins(10, 100, 10, 30)
+
+        self.childWidget = QWidget(self)  # 用于控制显示也隐藏
+        layout.addWidget(self.childWidget)
+
+        self._layout = QGridLayout(self.childWidget)
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        # 单个item鼠标悬停离开信号
+        Signals.imageHovered.connect(self.onImageHovered)
+
+    def onImageHovered(self, hovered, _):
+        self.childWidget.setVisible(not hovered)
+
+    def leaveEvent(self, event):
+        """鼠标离开事件"""
+        super(PageView, self).leaveEvent(event)
+        Signals.imageHovered.emit(False, None)
 
     def addImages(self, images):
         """添加图片"""
@@ -44,9 +62,6 @@ class PageView(QWidget):
             col = i % 2  # 0 or 1
             # 行
             row = int((i - col) / 2)
-
             # 添加图片到布局中
-            self.layout().addWidget(
-                ImageView(enddate, url, copyright, copyrightlink, hsh, self), row, col, 1, 1)
-        # 发送信号通知主界面把自己添加到层叠布局中
-        Signals.pageAdded.emit(self)
+            self._layout.addWidget(ImageView(
+                enddate, url, copyright, copyrightlink, hsh, self), row, col, 1, 1)
