@@ -34,6 +34,7 @@ class SplashView(QSplashScreen):
             super(SplashView, self).__init__(QPixmap(path))
         else:
             super(SplashView, self).__init__()
+        self.setCursor(Qt.ForbiddenCursor)
         Signals.splashClosed.connect(self.onClose)
         self.showMessage('正在加载网络数据...', Qt.AlignRight |
                          Qt.AlignBottom, Qt.white)

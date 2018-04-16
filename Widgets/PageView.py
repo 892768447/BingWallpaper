@@ -28,7 +28,7 @@ class PageView(QWidget):
         layout = QVBoxLayout(self, spacing=0)
         layout.setContentsMargins(10, 100, 10, 30)
 
-        self.childWidget = QWidget(self)  # 用于控制显示也隐藏
+        self.childWidget = QWidget(self, objectName='childWidget')  # 用于控制显示也隐藏
         layout.addWidget(self.childWidget)
 
         self._layout = QGridLayout(self.childWidget)

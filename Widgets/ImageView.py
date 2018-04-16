@@ -15,10 +15,11 @@ from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtNetwork import QNetworkRequest
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QSpacerItem, QSizePolicy,\
-    QApplication
+    QApplication, QAction
 
 from Utils.NetWork import NetWork
 from Utils.Signals import Signals
+from Utils.System import System
 
 
 __Author__ = 'By: Irony\nQQ: 892768447\nEmail: 892768447@qq.com'
@@ -34,17 +35,20 @@ class ImageView(QLabel):
                  copyrightlink, hsh, *args, **kwargs):
         super(ImageView, self).__init__(*args, **kwargs)
         self._image = None
+        self._path = None
         self.setOpenExternalLinks(True)
         self.setScaledContents(True)  # 设置图片适应控件大小
         self.setCursor(Qt.PointingHandCursor)
+        self.setContextMenuPolicy(Qt.ActionsContextMenu)
+        self.addAction(QAction('设置为壁纸', self, triggered=self.onTriggered))
         layout = QVBoxLayout(self, spacing=0)
-        layout.setContentsMargins(2, 2, 2, 2)
+        layout.setContentsMargins(0, 0, 0, 0)
         # 拉伸
         layout.addSpacerItem(
             QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
         # 底部标题
         self.titleLabel = QLabel(
-            self, wordWrap=True, alignment=Qt.AlignRight | Qt.AlignBottom,
+            self, wordWrap=True, alignment=Qt.AlignRight | Qt.AlignVCenter,
             objectName='titleLabel')
         layout.addWidget(self.titleLabel)
         # 设置文字和加载图片
@@ -74,7 +78,14 @@ class ImageView(QLabel):
     def mousePressEvent(self, event):
         """鼠标单击预览"""
         super(ImageView, self).mousePressEvent(event)
-        Signals.imageHovered.emit(True, self._image)
+        if event.button() == Qt.LeftButton:
+            Signals.imageHovered.emit(True, self._image)
+
+    def mouseReleaseEvent(self, event):
+        """鼠标释放开则还原"""
+        super(ImageView, self).mouseReleaseEvent(event)
+        if event.button() == Qt.LeftButton:
+            Signals.imageHovered.emit(False, None)
 
     def mouseDoubleClickEvent(self, event):
         """鼠标双击则应用壁纸"""
@@ -83,6 +94,7 @@ class ImageView(QLabel):
     def setPixmap(self, pixmap):
         """设置图片"""
         if isinstance(pixmap, str):
+            self._path = pixmap
             self._image = QImage(pixmap)  # 先加载图片并不显示
             return self
         super(ImageView, self).setPixmap(pixmap)
@@ -122,6 +134,11 @@ class ImageView(QLabel):
         # 回调函数用于加载图片显示
         req.setAttribute(QNetworkRequest.User + 3, self._setPixmap)
         return req
+
+    def onTriggered(self, _):
+        """设置为壁纸"""
+        if self._path:
+            System.setWallpaper(os.path.abspath(self._path))
 
 
 if __name__ == '__main__':

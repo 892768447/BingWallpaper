@@ -27,6 +27,15 @@ StoryView > QLabel {
     font-size: 20px;
 }
 
+ImageView > #titleLabel {
+    min-height: 24px;
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 70), stop:1 rgba(0, 0, 0, 50));
+}
+
+#childWidget {
+    background-color: rgba(255, 255, 255, 100);
+}
+
 #previousButton {
     color: white;
     qproperty-text: "3";
@@ -47,5 +56,18 @@ StoryView > QLabel {
 
 #previousButton:hover,#nextButton:hover {
     background: rgba(255, 255, 255, 100);
+}
+
+QMenu {
+    background-color: white;
+    border: none;
+}
+QMenu::item {
+    padding:8px 32px;
+    background-color: transparent;
+}
+QMenu::item:selected {
+    color: black;
+    background-color: rgba(0, 0, 0, 50);
 }
 """

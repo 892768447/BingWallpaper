@@ -12,7 +12,7 @@ Created on 2018年4月14日
 import json
 import os
 
-from PyQt5.QtCore import QUrl, QTimer
+from PyQt5.QtCore import QUrl, QTimer, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtNetwork import QNetworkRequest
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QPushButton, QStackedLayout,\
@@ -116,6 +116,7 @@ class MainView(QLabel):
         QTimer.singleShot(1000, self.onShow)
 
     def onShow(self):
+        self.setCursor(Qt.ArrowCursor)
         self.setVisible(True)
         Signals.splashClosed.emit(self)  # 通知关闭启动界面
 
